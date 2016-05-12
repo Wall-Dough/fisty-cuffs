@@ -1,10 +1,15 @@
 var canvas;
 var context;
-var fps = 60;
-var actualFps = 60;
+var draw_fps = 60;
+var update_fps = 60;
+
+var last_time = 0;
+var update_factor = 1;
 
 var drawables = [];
+var updatables = [];
 
+var SPACE_BAR = 32;
 var LEFT_ARROW = 37;
 var UP_ARROW = 38;
 var RIGHT_ARROW = 39;
@@ -12,13 +17,20 @@ var DOWN_ARROW = 40;
 
 var keysPressed = {};
 
+var xOffset = 0;
+
 
 function fixWidth() {
   canvas[0].width = canvas.width();
   canvas[0].height = canvas.height();
 }
 
+function calculateOffset() {
+  // xOffset = (canvas.width() / 2) - player.x;
+}
+
 function drawDrawables() {
+  calculateOffset();
   for (i in drawables) {
     var drawable = drawables[i];
     if (drawable.draw != undefined) {
@@ -27,9 +39,31 @@ function drawDrawables() {
   }
 }
 
+function updateUpdatables() {
+  for (i in updatables) {
+    var updatable = updatables[i];
+    if (updatable.update != undefined) {
+      updatable.update();
+    }
+  }
+}
+
+function calculateFactor() {
+  var time = Date.now();
+  if (last_time > 0) {
+    elapsed = time - last_time;
+    update_factor = (time - last_time) / (1000 / update_fps);
+  }
+  last_time = time;
+}
+
 function update() {
+  calculateFactor();
+  updateUpdatables();
+}
+
+function draw() {
   fixWidth();
-  player.update();
   drawDrawables();
 }
 
@@ -43,7 +77,8 @@ $(document).ready(function () {
   fixWidth();
   start();
 
-  setInterval(update, 1000 / fps);
+  setInterval(draw, 1000 / draw_fps);
+  setInterval(update, 1000 / update_fps);
 
   $(window).keydown(function (e) {
     var keycode = (e.keyCode ? e.keyCode : e.which);
