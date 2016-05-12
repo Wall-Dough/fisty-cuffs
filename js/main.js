@@ -1,7 +1,7 @@
-$.getScript("player.js");
-$.getScript("watcher.js");
-$.getScript("box.js");
-$.getScript("init.js");
+$.getScript("js/player.js");
+$.getScript("js/watcher.js");
+$.getScript("js/box.js");
+$.getScript("js/init.js");
 
 var player;
 
